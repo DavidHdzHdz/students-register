@@ -1,0 +1,30 @@
+<!-- Load the Polymer.Element base class -->
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./components/my-form.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-register-view">
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 16px;
+      }
+
+    </style>
+    <div class="card">
+      <h1>formulario de registro al curso de polymer</h1>
+      <my-form></my-form>
+    </div>
+  </template>
+  <script>
+    // Your new element extends the Polymer.Element base class
+    class MyRegisterView extends Polymer.Element {
+      static get is() { return 'my-register-view'; }
+    }
+    //Now, register your new custom element so the browser can use it
+    customElements.define(MyRegisterView.is, MyRegisterView);
+  </script>
+</dom-module>
