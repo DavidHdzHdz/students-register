@@ -1,19 +1,29 @@
 const noteRoutes = function(app, db) {
-  // configure header our app
-  app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
+  let student = "";
+  let list ={};
+
   // You'll save our studends here.
-  app.post('/studends', (req, res) => {
-    console.log(req.body);
-    console.log(req.body.studentName);
-    res.send(JSON.stringify({ res: 'you send a new studend' }));
+  app.post('/students', (req, res) => {
+    student = { name: req.body.studentName };
+    db.collection('students').insert(student, (err, result) => {
+      if (err) {
+        res.status(400).send();
+        console.log({ 'error': 'An error has occurred' });
+      } else {
+        res.status(200).send();
+        console.log('se guardo el archivo');
+      }
+    });
   });
   // You'll list our studends here.
-  app.get('/studends', (req, res) => {
-    res.send(JSON.stringify({ res: 'you get a list of studends' }));
+  app.get('/students', (req, res) => {
+    //res.status(200).send(JSON.stringify({ res: 'you get a list of studends' }));
+    list = db.collection('students').find().toArray(function(err, results) {
+      if(err) {
+        res.status(400).send();
+      }
+      res.status(200).send(results);
+    })
   });
 }
 
