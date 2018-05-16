@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="my-form">
   <!-- Defines the element's style and local DOM -->
@@ -17,14 +18,44 @@
         color: #EEE;
       }
     </style>
-
-    <paper-input label="student name"></paper-input>
-    <paper-button raised class="green" role="button" tabindex="0"  elevation="0" aria-disabled="false">Save</paper-button>
+    <iron-ajax id="postExample"
+      method="POST"
+      body='studentName={{postBody}}'
+      handle-as="json"
+      content-type="application/x-www-form-urlencoded"
+      on-response="serverSuccessCb"
+      last-response="{{serverSuccessObj}}"
+      on-error="serverErrorCb"
+      last-error="{{serverErrorObj}}"
+      url="http://localhost:8000/studends/">
+    </iron-ajax>
+    <paper-input label="student name" value="{{student}}"></paper-input>
+    <paper-button on-tap="sendData" raised class="green" role="button" tabindex="0"  elevation="0" aria-disabled="false">Save</paper-button>
   </template>
   <script>
     // Your new element extends the Polymer.Element base class
     class MyForm extends Polymer.Element {
       static get is() { return 'my-form'; }
+      static get properties() {
+        return {
+          postBody: {
+            type: String,
+            computed: 'getPostBody(student)'
+          }
+        }
+      }
+      getPostBody(student) {
+        //console.log(post);
+        return student;
+      }
+      sendData(event) {
+        console.log(this.$.postExample.body);
+        this.$.postExample.generateRequest();
+      }
+      serverSuccessCb(event) {
+        this.serverSuccessObj = event.detail.__data.response;
+        console.log(this.serverSuccessObj);
+      }
     }
     //Now, register your new custom element so the browser can use it
     customElements.define(MyForm.is, MyForm);
