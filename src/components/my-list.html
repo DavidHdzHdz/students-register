@@ -14,7 +14,11 @@
 
         padding: 16px;
       }
+      .input__id {
+        display: none;
+      }
       .colored__dialog {
+        width: 80%;
         color: blue;
       }
       .blue {
@@ -51,15 +55,15 @@
 
     <!-- ajax update -->
     <iron-ajax id="ajaxUpdate"
-      method="UPDATE"
-      body='studentName={{studentName}}&studentId={{studentId}}'
+      method="POST"
+      body="studentName={{studentName}}"
       handle-as="json"
       content-type="application/x-www-form-urlencoded"
       on-response="successUpdate"
       last-response="{{successUpdateObj}}"
       on-error="serverErrorCb"
       last-error="{{errorUpdateObj}}"
-      url="http://localhost:8000/students/update/">
+      url="http://localhost:8000/students/{{studentId}}/">
     </iron-ajax>
 
     <!-- ajax get & delete -->
@@ -72,6 +76,7 @@
       last-error="{{serverErrorObj}}"
       url="{{url}}">
     </iron-ajax>
+
       <!-- table with list of students -->
       <table>
         <thead>
@@ -95,10 +100,10 @@
 
       <!-- update form -->
       <paper-dialog id="updateStudent" class="colored__dialog">
-        <h2>Actalizar alumno: {{studentName}}</h2>
-        <paper-input value="{{studentId}}"></paper-input>
+        <h2>Actalizar alumno:<br /> {{studentName}}</h2>
+        <paper-input class="input__id" value="{{studentId}}"></paper-input>
         <paper-input label="student name" value="{{studentName}}"></paper-input>
-        <paper-button on-tap="toggleDialog">Enviar</paper-button><paper-button on-tap="toggleDialog">Cancelar</paper-button>
+        <paper-button on-tap="_sendUpdate">Enviar</paper-button><paper-button on-tap="toggleDialog">Cancelar</paper-button>
       </paper-dialog>
   </template>
 
@@ -127,6 +132,7 @@
         }
       }
 
+      // my component is added to DOM
       connectedCallback() {
         super.connectedCallback();
         this.url = 'http://localhost:8000/students/0';
@@ -134,20 +140,33 @@
         this.$.postExample.generateRequest();
       }
 
+      // succes DELETE & GET
       serverSuccessCb(event) {
         console.log(this.serverSuccessObj);
       }
 
+      // push update button
       _update(event) {
         this.studentId = event.model.item._id;
         this.studentName = event.model.item.name;
         this.toggleDialog();
-        setTimeout(() => {
-          this.connectedCallback();
-        }, 100);
+      }
+
+      // send update student data
+      _sendUpdate() {
+        this.$.ajaxUpdate.generateRequest();
 
       }
 
+      // succes ajax update data
+      successUpdate() {
+        this.toggleDialog();
+        setTimeout(() => {
+          this.connectedCallback();
+        }, 100);
+      }
+
+      // push delete & delete data
       _delete(event) {
         this.url = `http://localhost:8000/students/${event.model.item._id}/`;
         this.method = 'GET';
@@ -158,10 +177,12 @@
         }, 100);
       }
 
+      // togg update dialog
       toggleDialog() {
         this.$.updateStudent.toggle();
       }
     }
+
     //Now, register your new custom element so the browser can use it
     customElements.define(MyList.is, MyList);
   </script>

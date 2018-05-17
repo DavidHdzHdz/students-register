@@ -40,6 +40,20 @@ const noteRoutes = function(app, db) {
       })
     }
   });
+
+  // update students data here
+  app.post('/students/:id/', (req, res) => {
+    const id = req.params.id;
+    const details = { '_id': new ObjectId(id) };
+    student = { name: req.body.studentName };
+    db.collection('students').update(details, student, (err, result) => {
+      if (err) {
+          res.status(400).send(err);
+      } else {
+          res.status(200).send(req.body);
+      }
+    });
+  });
 }
 
 module.exports = function(app, db) {
