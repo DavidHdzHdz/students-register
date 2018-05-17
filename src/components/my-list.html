@@ -2,6 +2,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="my-list">
   <!-- Defines the element's style and local DOM -->
@@ -11,6 +13,9 @@
         display: block;
 
         padding: 16px;
+      }
+      .colored__dialog {
+        color: blue;
       }
       .blue {
         background-color: blue;
@@ -43,15 +48,31 @@
         border-top: 2px solid #dee2e6;
       }
     </style>
+
+    <!-- ajax update -->
+    <iron-ajax id="ajaxUpdate"
+      method="UPDATE"
+      body='studentName={{studentName}}&studentId={{studentId}}'
+      handle-as="json"
+      content-type="application/x-www-form-urlencoded"
+      on-response="successUpdate"
+      last-response="{{successUpdateObj}}"
+      on-error="serverErrorCb"
+      last-error="{{errorUpdateObj}}"
+      url="http://localhost:8000/students/update/">
+    </iron-ajax>
+
+    <!-- ajax get & delete -->
     <iron-ajax id="postExample"
-      method="GET"
+      method="{{method}}"
       handle-as="json"
       on-response="serverSuccessCb"
       last-response="{{serverSuccessObj}}"
       on-error="serverErrorCb"
       last-error="{{serverErrorObj}}"
-      url="http://localhost:8000/students/">
+      url="{{url}}">
     </iron-ajax>
+      <!-- table with list of students -->
       <table>
         <thead>
           <tr>
@@ -62,16 +83,26 @@
         <tbody>
           <template is="dom-repeat" items="{{serverSuccessObj}}">
             <tr>
-              <td><h5>{{item.name}}</h5><span>{{item._id}}</span></td>
+              <td><h5>[[item.name]]</h5></td>
               <td>
-                <paper-button on-tap="_update" raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
-                <paper-button  on-tap="_delete" raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
+                <paper-button on-click="_update" raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
+                <paper-button  on-click="_delete" raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
               </td>
             </tr>
           </template>
         </tbody>
       </table>
+
+      <!-- update form -->
+      <paper-dialog id="updateStudent" class="colored__dialog">
+        <h2>Actalizar alumno: {{studentName}}</h2>
+        <paper-input value="{{studentId}}"></paper-input>
+        <paper-input label="student name" value="{{studentName}}"></paper-input>
+        <paper-button on-tap="toggleDialog">Enviar</paper-button><paper-button on-tap="toggleDialog">Cancelar</paper-button>
+      </paper-dialog>
   </template>
+
+  <!-- js code -->
   <script>
     // Your new element extends the Polymer.Element base class
     class MyList extends Polymer.Element {
@@ -79,28 +110,56 @@
       static get properties() {
         return {
           serverSuccessObj: {
+            type: Object,
+          },
+          url: {
+            type: String,
+          },
+          method: {
+            type: String,
+          },
+          studentName: {
+            type: String,
+          },
+          studentId: {
             type: String,
           }
         }
       }
+
       connectedCallback() {
         super.connectedCallback();
+        this.url = 'http://localhost:8000/students/0';
+        this.method = 'GET';
         this.$.postExample.generateRequest();
       }
+
       serverSuccessCb(event) {
-        //this.serverSuccessObj = event.detail.__data.response;
         console.log(this.serverSuccessObj);
       }
-      _update() {
+
+      _update(event) {
+        this.studentId = event.model.item._id;
+        this.studentName = event.model.item.name;
+        this.toggleDialog();
         setTimeout(() => {
           this.connectedCallback();
         }, 100);
 
       }
-      _delete() {
+
+      _delete(event) {
+        this.url = `http://localhost:8000/students/${event.model.item._id}/`;
+        this.method = 'GET';
+        this.$.postExample.generateRequest();
+        console.log(this.url);
         setTimeout(() => {
           this.connectedCallback();
         }, 100);
+      }
+
+      toggleDialog() {
+        this.$.updateStudent.toggle();
       }
     }
     //Now, register your new custom element so the browser can use it
