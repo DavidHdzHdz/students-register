@@ -33,18 +33,17 @@
       table td {
         padding: 0.75rem;
         vertical-align: top;
-        border-top: 1px solid #d1e1e1;
+        border-top: 1px solid #c1d1d1;
       }
       table thead th {
         vertical-align: bottom;
-        border-bottom: 2px solid #dee2e6;
+        border-bottom: 2px solid #c1d1d1;
       }
       table tbody + tbody {
         border-top: 2px solid #dee2e6;
       }
     </style>
     <iron-ajax id="postExample"
-      auto
       method="GET"
       handle-as="json"
       on-response="serverSuccessCb"
@@ -63,10 +62,10 @@
         <tbody>
           <template is="dom-repeat" items="{{serverSuccessObj}}">
             <tr>
-              <td><h5>{{item.name}}</h5></td>
+              <td><h5>{{item.name}}</h5><span>{{item._id}}</span></td>
               <td>
-                <paper-button  raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
-                <paper-button  raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
+                <paper-button on-tap="_update" raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
+                <paper-button  on-tap="_delete" raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
               </td>
             </tr>
           </template>
@@ -86,11 +85,22 @@
       }
       connectedCallback() {
         super.connectedCallback();
-        console.log('my-element created!');
+        this.$.postExample.generateRequest();
       }
       serverSuccessCb(event) {
         //this.serverSuccessObj = event.detail.__data.response;
         console.log(this.serverSuccessObj);
+      }
+      _update() {
+        setTimeout(() => {
+          this.connectedCallback();
+        }, 100);
+
+      }
+      _delete() {
+        setTimeout(() => {
+          this.connectedCallback();
+        }, 100);
       }
     }
     //Now, register your new custom element so the browser can use it

@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="my-form">
   <!-- Defines the element's style and local DOM -->
@@ -20,6 +21,12 @@
       a {
         text-decoration: none;
       }
+      paper-dialog.colored {
+        border: 2px solid;
+        border-color: #F05D3D;
+        background-color: #f1f8e9;
+        color: #F05D3D;
+      }
     </style>
     <iron-ajax id="postExample"
       method="POST"
@@ -33,9 +40,12 @@
       url="http://localhost:8000/students/">
     </iron-ajax>
     <paper-input label="student name" value="{{student}}"></paper-input>
-    <a href="http://localhost:8081/list">
     <paper-button on-tap="sendData" raised class="green" role="button" tabindex="0"  elevation="0" aria-disabled="false">Save</paper-button>
-    </a>
+    <paper-dialog id="error_dialog" class="colored">
+      <h2>Error: Servidor no disponible</h2>
+      <h4>[nota para desarrollador: asegurese que el servidor este inicializado y conectado a la base de datos]</h4>
+      <paper-button on-tap="toggleError">Close</paper-button>
+    </paper-dialog>
 
   </template>
   <script>
@@ -61,6 +71,13 @@
       serverSuccessCb(event) {
         this.serverSuccessObj = event.detail.__data.response;
         console.log(this.serverSuccessObj);
+        window.location.assign('http://localhost:8081/list');
+      }
+      serverErrorCb(event) {
+        this.toggleError();
+      }
+      toggleError() {
+        this.$.error_dialog.toggle();
       }
     }
     //Now, register your new custom element so the browser can use it

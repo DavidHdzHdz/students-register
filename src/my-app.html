@@ -79,7 +79,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         tail="{{subroute}}">
     </app-route>
 
-    <app-drawer-layout fullbleed narrow="{{narrow}}" id="list">
+    <app-drawer-layout fullbleed narrow="{{narrow}}">
       <!-- Drawer content -->
       <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
         <app-toolbar>Menu</app-toolbar>
@@ -102,7 +102,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages
             selected="[[page]]"
             attr-for-selected="name"
-            fallback-selection="view404"
+            fallback-selection="404"
             role="main">
           <my-register-view name="register"></my-register-view>
           <my-list-view name="list"></my-list-view>
@@ -155,10 +155,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _pageChanged(page) {
         // Load page import on demand. Show 404 page if fails
         const resolvedPageUrl = this.resolveUrl('my-' + page +  '-view.html');
-        if(page==='list') {
-          console.log('my list view');
-          console.log(this.$.list.connectedCallback);
-        }
         Polymer.importHref(
             resolvedPageUrl,
             null,
