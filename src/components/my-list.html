@@ -1,0 +1,99 @@
+<!-- Load the Polymer.Element base class -->
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="my-list">
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        padding: 16px;
+      }
+      .blue {
+        background-color: blue;
+        color: #EEE;
+      }
+      .red {
+        background-color: red;
+        color: #EEE;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+        background-color: transparent;
+        border: 1px solid #aba1a5;
+        background-color: #e7e9ec;
+      }
+      table th,
+      table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #d1e1e1;
+      }
+      table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+      }
+      table tbody + tbody {
+        border-top: 2px solid #dee2e6;
+      }
+    </style>
+    <iron-ajax id="postExample"
+      auto
+      method="GET"
+      handle-as="json"
+      on-response="serverSuccessCb"
+      last-response="{{serverSuccessObj}}"
+      on-error="serverErrorCb"
+      last-error="{{serverErrorObj}}"
+      url="http://localhost:8000/students/">
+    </iron-ajax>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre del alumno</th>
+            <th>Actualizar/borrar</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template is="dom-repeat" items="{{serverSuccessObj}}">
+            <tr>
+              <td><h5>{{item.name}}</h5></td>
+              <td>
+                <paper-button  raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
+                <paper-button  raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+  </template>
+  <script>
+    // Your new element extends the Polymer.Element base class
+    class MyList extends Polymer.Element {
+      static get is() { return 'my-list'; }
+      static get properties() {
+        return {
+          serverSuccessObj: {
+            type: String,
+          }
+        }
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        console.log('my-element created!');
+      }
+      serverSuccessCb(event) {
+        //this.serverSuccessObj = event.detail.__data.response;
+        console.log(this.serverSuccessObj);
+      }
+    }
+    //Now, register your new custom element so the browser can use it
+    customElements.define(MyList.is, MyList);
+  </script>
+</dom-module>

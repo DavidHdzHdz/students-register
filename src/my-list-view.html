@@ -1,18 +1,25 @@
 <!-- Load the Polymer.Element base class -->
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./components/my-list.html">
+<link rel="import" href="shared-styles.html">
 
 <dom-module id="my-list-view">
   <!-- Defines the element's style and local DOM -->
   <template>
-    <style>
+    <style include="shared-styles">
       :host {
         display: block;
 
         padding: 16px;
       }
+      table {
+        border-collapse: collapse;
+      }
     </style>
-
-    <h1>Lista de alumnos inscritos al curso de polymer</h1>
+    <div class="card">
+      <h2>Lista de alumnos inscritos al curso de polymer</h2>
+      <my-list></my-list>
+    </div>
   </template>
   <script>
     // Your new element extends the Polymer.Element base class

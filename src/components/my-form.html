@@ -17,6 +17,9 @@
         background-color: #00e600;
         color: #EEE;
       }
+      a {
+        text-decoration: none;
+      }
     </style>
     <iron-ajax id="postExample"
       method="POST"
@@ -30,7 +33,10 @@
       url="http://localhost:8000/students/">
     </iron-ajax>
     <paper-input label="student name" value="{{student}}"></paper-input>
+    <a href="http://localhost:8081/list">
     <paper-button on-tap="sendData" raised class="green" role="button" tabindex="0"  elevation="0" aria-disabled="false">Save</paper-button>
+    </a>
+
   </template>
   <script>
     // Your new element extends the Polymer.Element base class
