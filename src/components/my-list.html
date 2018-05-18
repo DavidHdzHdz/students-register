@@ -17,10 +17,6 @@
       .input__id {
         display: none;
       }
-      .colored__dialog {
-        width: 80%;
-        color: blue;
-      }
       .blue {
         background-color: blue;
         color: #EEE;
@@ -51,6 +47,25 @@
       table tbody + tbody {
         border-top: 2px solid #dee2e6;
       }
+      .container {
+        position: relative;
+      }
+      .colored__dialog {
+        color: blue;
+        width: 700px;
+        position: sticky;
+        z-index: 0;
+      }
+      @media (min-width: 630px) and (max-width:1240px) {
+        .colored__dialog {
+          color: blue;
+          width: 50%;
+          position: sticky;
+          right: 40px;
+          z-index: 0;
+        }
+      }
+
     </style>
 
     <!-- ajax update -->
@@ -76,35 +91,36 @@
       last-error="{{serverErrorObj}}"
       url="{{url}}">
     </iron-ajax>
-
-      <!-- table with list of students -->
-      <table>
-        <thead>
-          <tr>
-            <th>Nombre del alumno</th>
-            <th>Actualizar/borrar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template is="dom-repeat" items="{{serverSuccessObj}}">
+      <div class="container">
+        <!-- table with list of students -->
+        <table>
+          <thead>
             <tr>
-              <td><h5>[[item.name]]</h5></td>
-              <td>
-                <paper-button on-click="_update" raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
-                <paper-button  on-click="_delete" raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
-              </td>
+              <th>Nombre del alumno</th>
+              <th>Actualizar/borrar</th>
             </tr>
-          </template>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <template is="dom-repeat" items="{{serverSuccessObj}}">
+              <tr>
+                <td><h5>[[item.name]]</h5></td>
+                <td>
+                  <paper-button on-click="_update" raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
+                  <paper-button  on-click="_delete" raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
 
-      <!-- update form -->
-      <paper-dialog id="updateStudent" class="colored__dialog">
-        <h2>Actalizar alumno:<br /> {{studentName}}</h2>
-        <paper-input class="input__id" value="{{studentId}}"></paper-input>
-        <paper-input label="student name" value="{{studentName}}"></paper-input>
-        <paper-button on-tap="_sendUpdate">Enviar</paper-button><paper-button on-tap="toggleDialog">Cancelar</paper-button>
-      </paper-dialog>
+        <!-- update form -->
+        <paper-dialog id="updateStudent" class="colored__dialog">
+          <h2>Actalizar alumno:<br /> {{studentName}}</h2>
+          <paper-input class="input__id" value="{{studentId}}"></paper-input>
+          <paper-input label="student name" value="{{studentName}}"></paper-input>
+          <paper-button on-tap="_sendUpdate">Enviar</paper-button><paper-button on-tap="toggleDialog">Cancelar</paper-button>
+        </paper-dialog>
+      </div>
   </template>
 
   <!-- js code -->
