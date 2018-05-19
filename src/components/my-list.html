@@ -1,0 +1,205 @@
+<!-- Load the Polymer.Element base class -->
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="my-list">
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style>
+      :host {
+        display: block;
+
+        padding: 16px;
+      }
+      .input__id {
+        display: none;
+      }
+      .blue {
+        background-color: blue;
+        color: #EEE;
+      }
+      .red {
+        background-color: red;
+        color: #EEE;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+        background-color: transparent;
+        border: 1px solid #aba1a5;
+        background-color: #e7e9ec;
+      }
+      table th,
+      table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #c1d1d1;
+      }
+      table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #c1d1d1;
+      }
+      table tbody + tbody {
+        border-top: 2px solid #dee2e6;
+      }
+      .container {
+        position: relative;
+      }
+      .colored__dialog {
+        color: blue;
+        width: 700px;
+        position: sticky;
+        z-index: 0;
+      }
+      @media (min-width: 630px) and (max-width:1240px) {
+        .colored__dialog {
+          color: blue;
+          width: 50%;
+          position: sticky;
+          right: 40px;
+          z-index: 0;
+        }
+      }
+
+    </style>
+
+    <!-- ajax update -->
+    <iron-ajax id="ajaxUpdate"
+      method="POST"
+      body="studentName={{studentName}}"
+      handle-as="json"
+      content-type="application/x-www-form-urlencoded"
+      on-response="successUpdate"
+      last-response="{{successUpdateObj}}"
+      on-error="serverErrorCb"
+      last-error="{{errorUpdateObj}}"
+      url="http://localhost:8000/students/{{studentId}}/">
+    </iron-ajax>
+
+    <!-- ajax get & delete -->
+    <iron-ajax id="postExample"
+      method="{{method}}"
+      handle-as="json"
+      on-response="serverSuccessCb"
+      last-response="{{serverSuccessObj}}"
+      on-error="serverErrorCb"
+      last-error="{{serverErrorObj}}"
+      url="{{url}}">
+    </iron-ajax>
+      <div class="container">
+        <!-- table with list of students -->
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre del alumno</th>
+              <th>Actualizar/borrar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template is="dom-repeat" items="{{serverSuccessObj}}">
+              <tr>
+                <td><h5>[[item.name]]</h5></td>
+                <td>
+                  <paper-button on-click="_update" raised class="blue" role="button" tabindex="0"  elevation="0" aria-disabled="false">Update</paper-button>
+                  <paper-button  on-click="_delete" raised class="red" role="button" tabindex="0"  elevation="0" aria-disabled="false">Delete</paper-button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+
+        <!-- update form -->
+        <paper-dialog id="updateStudent" class="colored__dialog">
+          <h2>Actalizar alumno:<br /> {{studentName}}</h2>
+          <paper-input class="input__id" value="{{studentId}}"></paper-input>
+          <paper-input label="student name" value="{{studentName}}"></paper-input>
+          <paper-button on-tap="_sendUpdate">Enviar</paper-button><paper-button on-tap="toggleDialog">Cancelar</paper-button>
+        </paper-dialog>
+      </div>
+  </template>
+
+  <!-- js code -->
+  <script>
+    // Your new element extends the Polymer.Element base class
+    class MyList extends Polymer.Element {
+      static get is() { return 'my-list'; }
+      static get properties() {
+        return {
+          serverSuccessObj: {
+            type: Object,
+          },
+          url: {
+            type: String,
+          },
+          method: {
+            type: String,
+          },
+          studentName: {
+            type: String,
+          },
+          studentId: {
+            type: String,
+          }
+        }
+      }
+
+      // my component is added to DOM
+      connectedCallback() {
+        super.connectedCallback();
+        this.url = 'http://localhost:8000/students/0';
+        this.method = 'GET';
+        this.$.postExample.generateRequest();
+      }
+
+      // succes DELETE & GET
+      serverSuccessCb(event) {
+        console.log(this.serverSuccessObj);
+      }
+
+      // push update button
+      _update(event) {
+        this.studentId = event.model.item._id;
+        this.studentName = event.model.item.name;
+        this.toggleDialog();
+      }
+
+      // send update student data
+      _sendUpdate() {
+        this.$.ajaxUpdate.generateRequest();
+
+      }
+
+      // succes ajax update data
+      successUpdate() {
+        this.toggleDialog();
+        setTimeout(() => {
+          this.connectedCallback();
+        }, 100);
+      }
+
+      // push delete & delete data
+      _delete(event) {
+        this.url = `http://localhost:8000/students/${event.model.item._id}/`;
+        this.method = 'GET';
+        this.$.postExample.generateRequest();
+        console.log(this.url);
+        setTimeout(() => {
+          this.connectedCallback();
+        }, 100);
+      }
+
+      // togg update dialog
+      toggleDialog() {
+        this.$.updateStudent.toggle();
+      }
+    }
+
+    //Now, register your new custom element so the browser can use it
+    customElements.define(MyList.is, MyList);
+  </script>
+</dom-module>

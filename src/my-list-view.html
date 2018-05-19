@@ -1,0 +1,32 @@
+<!-- Load the Polymer.Element base class -->
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./components/my-list.html">
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="my-list-view">
+  <!-- Defines the element's style and local DOM -->
+  <template>
+    <style include="shared-styles">
+      :host {
+        display: block;
+
+        padding: 16px;
+      }
+      table {
+        border-collapse: collapse;
+      }
+    </style>
+    <div class="card">
+      <h2>Lista de alumnos inscritos al curso de polymer</h2>
+      <my-list></my-list>
+    </div>
+  </template>
+  <script>
+    // Your new element extends the Polymer.Element base class
+    class MyListView extends Polymer.Element {
+      static get is() { return 'my-list-view'; }
+    }
+    //Now, register your new custom element so the browser can use it
+    customElements.define(MyListView.is, MyListView);
+  </script>
+</dom-module>
